@@ -174,7 +174,7 @@ fun SignInScreen(
             }
 
             TextButton(
-                onClick = {}
+                onClick = {navController.navigate(Screen.SignUpScreen.route)}
             ) {
                 Text(
                     text = stringResource(R.string.have_an_account_sign_up),

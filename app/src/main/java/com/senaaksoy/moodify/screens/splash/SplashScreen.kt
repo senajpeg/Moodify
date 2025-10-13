@@ -29,7 +29,7 @@ fun SplashScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = R.drawable.moodify_logo),
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
