@@ -1,6 +1,7 @@
 package com.senaaksoy.moodify.screens.auth
 
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.content.MediaType.Companion.Text
@@ -22,6 +23,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -30,29 +33,71 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.components.EditTextField
 import com.senaaksoy.moodify.navigation.Screen
+import com.senaaksoy.moodify.viewmodel.AuthViewModel
 
 @Composable
 fun SignInScreen(
     navController: NavController,
+    authViewModel: AuthViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
+    val authState by authViewModel.authState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            AuthState.INVALID_EMAIL_OR_PASSWORD -> {
+                Toast.makeText(context, "\n" +
+                        "Email or password is incorrect.", Toast.LENGTH_SHORT).show()
+                authViewModel.resetAuthState()
+            }
+            AuthState.INVALID_CREDENTIALS -> {
+                Toast.makeText(context, "\n" +
+                        "Email or password is incorrect", Toast.LENGTH_SHORT).show()
+                authViewModel.resetAuthState()
+            }
+            AuthState.FAILURE -> {
+                Toast.makeText(context, "An error has occurred.", Toast.LENGTH_SHORT).show()
+                authViewModel.resetAuthState()
+            }
+            AuthState.EMAIL_NOT_VERIFIED -> {
+                Toast.makeText(context, "Please verify your E-mail", Toast.LENGTH_SHORT).show()
+                authViewModel.resetAuthState()
+            }
+            AuthState.SUCCESS -> {
+                navController.navigate(Screen.HomeScreen.route) {
+                    popUpTo(Screen.SignInScreen.route) { inclusive = true }
+                }
+            }
+            else -> {}
+        }
+    }
+
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -82,8 +127,8 @@ fun SignInScreen(
 
             )
             EditTextField(
-                value = "",
-                onValueChange = {},
+                value = authViewModel.inputEmail,
+                onValueChange = {authViewModel.updateInputEmail(it)},
                 label = R.string.email,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next,
@@ -99,12 +144,12 @@ fun SignInScreen(
                 colors = OutlinedTextFieldDefaults.colors(focusedLabelColor = Color.White)
             )
             EditTextField(
-                value = "",
-                onValueChange = {},
+                value = authViewModel.inputPassword,
+                onValueChange = {authViewModel.updateInputPassword(it)},
                 label = R.string.password,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number
+                    keyboardType = KeyboardType.Password
                 ),
                 leadingIcon = {
                     Icon(
@@ -113,7 +158,16 @@ fun SignInScreen(
                         tint = Color(0xFFcfccf0)
                     )
                 },
-                trailingIcon = {},
+                trailingIcon = {
+                    Icon(
+                        imageVector = if(authViewModel.passwordVisibility)Icons.Filled.Visibility else Icons.Filled.VisibilityOff ,
+                        contentDescription = null,
+                        modifier = modifier.clickable {
+                            authViewModel.passwordVisibility = !authViewModel.passwordVisibility
+                        }
+                    )
+                },
+                visualTransformation = if (authViewModel.passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                 colors = OutlinedTextFieldDefaults.colors(focusedLabelColor = Color.White),
 
                 )
@@ -123,14 +177,15 @@ fun SignInScreen(
                 color = Color(0xFFaea0e4),
                 modifier = modifier
                     .width(270.dp)
-                    .clickable {},
+                    .clickable {navController.navigate(Screen.ForgotPasswordScreen.route)},
                 textAlign = TextAlign.End
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = {},
+                onClick = {authViewModel.signIn()},
+                enabled = authViewModel.isValidSignIn(),
                 modifier = modifier
                     .width(224.dp)
                     .clip(shape = RoundedCornerShape(12.dp))

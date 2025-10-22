@@ -14,6 +14,8 @@ import com.senaaksoy.moodify.screens.FavouritesScreen
 import com.senaaksoy.moodify.screens.HomeScreen
 import com.senaaksoy.moodify.screens.PickMoodScreen
 import com.senaaksoy.moodify.screens.ShowPlaylistScreen
+import com.senaaksoy.moodify.screens.auth.ForgotPasswordScreen
+import com.senaaksoy.moodify.screens.auth.ResetPasswordScreen
 
 import com.senaaksoy.moodify.screens.auth.SignInScreen
 import com.senaaksoy.moodify.screens.auth.SignUpScreen
@@ -56,6 +58,14 @@ fun MoodifyNavigation() {
             composable(route = Screen.FavouritesScreen.route) {
                 FavouritesScreen(navController = navController)
             }
+            composable(route = Screen.ForgotPasswordScreen.route) {
+                ForgotPasswordScreen(navController = navController)
+            }
+            composable(route = Screen.ResetPasswordScreen.route) { backStackEntry ->
+                val oobCode = backStackEntry.arguments?.getString("oobCode")
+                ResetPasswordScreen(navController = navController, oobCode = oobCode)
+            }
+
         }
     }
 

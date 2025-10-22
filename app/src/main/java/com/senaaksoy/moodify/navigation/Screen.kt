@@ -7,6 +7,8 @@ enum class Screen(val route : String) {
     HomeScreen(route = "HomeScreen"),
     PickMoodScreen(route = "PickMoodScreen"),
     ShowPlaylistScreen(route="ShowPlaylistScreen"),
-    FavouritesScreen(route = "FavouritesScreen")
+    FavouritesScreen(route = "FavouritesScreen"),
+    ForgotPasswordScreen(route = "ForgotPasswordScreen"),
+    ResetPasswordScreen(route = "ResetPasswordScreen?oobCode={oobCode}")
 
 }
