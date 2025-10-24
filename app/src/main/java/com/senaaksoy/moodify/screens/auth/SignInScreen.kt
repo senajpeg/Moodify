@@ -2,14 +2,14 @@ package com.senaaksoy.moodify.screens.auth
 
 
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -54,6 +54,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.components.EditTextField
 import com.senaaksoy.moodify.navigation.Screen
@@ -68,6 +70,24 @@ fun SignInScreen(
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
+// Google Sign-In launcher
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account?.let {
+                authViewModel.signInWithGoogle(it)
+            }
+        } catch (e: ApiException) {
+            Toast.makeText(
+                context,
+                "Google Sign-In başarısız: ${e.message}",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
     LaunchedEffect(authState) {
         when (authState) {
             AuthState.INVALID_EMAIL_OR_PASSWORD -> {
@@ -206,7 +226,11 @@ fun SignInScreen(
             }
 
             Button(
-                onClick = {},
+                onClick = {
+
+                    authViewModel.startGoogleSignIn {
+                        googleSignInLauncher.launch(authViewModel.getGoogleSignInIntent())
+                    }},
                 modifier = modifier
                     .width(224.dp)
                     .clip(shape = RoundedCornerShape(12.dp)),

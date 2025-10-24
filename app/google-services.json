@@ -12,7 +12,20 @@
           "package_name": "com.senaaksoy.moodify"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "144602666421-khgsbu09sgmfn8hj7dmqoegvmfih15me.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.senaaksoy.moodify",
+            "certificate_hash": "bca0cdefd5510f885a00441ae22c9b20dd27f53f"
+          }
+        },
+        {
+          "client_id": "144602666421-nn02ood9tmnrph42nl93kum5cqc7g5on.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyANKXWH3EfeMcbN11ytmH6ukJ3As_TeKjY"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "144602666421-nn02ood9tmnrph42nl93kum5cqc7g5on.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

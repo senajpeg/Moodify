@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.senaaksoy.moodify.repository.AuthRepository
 import com.senaaksoy.moodify.screens.auth.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,11 +15,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val googleSignInClient: GoogleSignInClient
 ) : ViewModel() {
     val currentUser get() = authRepository.currentUser
 
@@ -63,6 +67,40 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // Google Sign-In fonksiyonları
+    fun getGoogleSignInIntent() = googleSignInClient.signInIntent
+
+    fun signInWithGoogle(account: GoogleSignInAccount) {
+        viewModelScope.launch {
+            _authState.value = try {
+                googleSignInClient.signOut().await()
+                val email = account.email ?: throw Exception("Email bulunamadı")
+
+                val isRegistered = authRepository.isUserRegistered(email)
+                if (isRegistered) {
+                    authRepository.signInWithGoogle(account)
+                    AuthState.SUCCESS
+                } else {
+                    // Yeni kullanıcı - kaydet
+                    authRepository.signInWithGoogle(account)
+                    authRepository.saveGoogleUser(account)
+                    AuthState.SUCCESS
+                }
+            } catch (e: Exception) {
+                AuthState.FAILURE
+            }
+        }
+    }
+    fun startGoogleSignIn(onReady: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                googleSignInClient.signOut().await()
+                onReady()
+            } catch (e: Exception) {
+                onReady()
+            }
+        }
+    }
     fun signUp() {
         viewModelScope.launch {
             _authState.value = try {

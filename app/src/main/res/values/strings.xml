@@ -14,5 +14,6 @@
     <string name="email_support_text">Invalid email format</string>
     <string name="password_support">Password must consist of 6 characters.</string>
     <string name="username_support_text">"Username must be 3-15 characters long and can only contain letters, numbers, underscores, or dots."</string>
+    <string name="default_web_client_id">144602666421-nn02ood9tmnrph42nl93kum5cqc7g5on.apps.googleusercontent.com</string>
 
 </resources>

@@ -1,7 +1,9 @@
 package com.senaaksoy.moodify.repository
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.senaaksoy.moodify.model.User
 import kotlinx.coroutines.tasks.await
@@ -53,7 +55,32 @@ class AuthRepository @Inject constructor(
     suspend fun confirmPasswordReset(oobCode: String, newPassword: String) {
         auth.confirmPasswordReset(oobCode, newPassword).await()
     }
+    // Google Sign-In fonksiyonları
+    suspend fun signInWithGoogle(account: GoogleSignInAccount): AuthResult {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        return auth.signInWithCredential(credential).await()
+    }
 
+    suspend fun isUserRegistered(email: String): Boolean {
+        val snapshot = firestore.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+        return !snapshot.isEmpty
+    }
+
+    suspend fun saveGoogleUser(account: GoogleSignInAccount) {
+        val uid = auth.currentUser?.uid ?: throw Exception("UID bulunamadı")
+        val email = account.email ?: throw Exception("Email bulunamadı")
+        val displayName = account.displayName ?: "User"
+
+        val user = User(
+            uid = uid,
+            email = email,
+            username = displayName
+        )
+        saveUserFirestore(user)
+    }
 
 
 }
