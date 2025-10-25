@@ -220,7 +220,7 @@ fun SignInScreen(
                 modifier = Modifier
                     //.width(224.dp)
 
-                    .widthIn(max = 300.dp)
+                    .widthIn(max = 350.dp)
                     .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp))
                     .background(
@@ -250,7 +250,7 @@ fun SignInScreen(
                 modifier = Modifier
                    // .width(224.dp)
 
-                    .widthIn(max = 300.dp)
+                    .widthIn(max = 350.dp)
                     .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp)),
                 colors = ButtonDefaults.outlinedButtonColors(
