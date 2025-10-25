@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.navigation.Screen
+import com.senaaksoy.moodify.navigation.navigateSingleTopClear
 import kotlinx.coroutines.delay
 
 @Composable
@@ -32,15 +33,17 @@ fun SplashScreen(
 
         if (host == "resetPassword" && !oobCode.isNullOrEmpty()) {
             // Reset password ekranına git
-            navController.navigate("ResetPasswordScreen?oobCode=$oobCode") {
+            /*navController.navigate("ResetPasswordScreen?oobCode=$oobCode") {
                 popUpTo(Screen.SplashScreen.route) { inclusive = true }
-            }
+            }*/
+            navController.navigateSingleTopClear(route = "ResetPasswordScreen?oobCode=$oobCode")
         } else {
             // Normal 3 saniye bekleyip SignInScreen'e git
             delay(3000)
-            navController.navigate(Screen.SignInScreen.route) {
+           /* navController.navigate(Screen.SignInScreen.route) {
                 popUpTo(Screen.SplashScreen.route) { inclusive = true }
-            }
+            }*/
+            navController.navigateSingleTopClear(route = Screen.SignInScreen.route)
         }
     }
 

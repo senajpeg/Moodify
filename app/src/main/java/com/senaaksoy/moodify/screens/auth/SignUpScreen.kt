@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -53,6 +54,7 @@ import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.components.CustomDialog
 import com.senaaksoy.moodify.components.EditTextField
 import com.senaaksoy.moodify.navigation.Screen
+import com.senaaksoy.moodify.navigation.navigateSingleTopClear
 import com.senaaksoy.moodify.viewmodel.AuthViewModel
 
 
@@ -80,11 +82,11 @@ fun SignUpScreen(
 
     if (authState == AuthState.SUCCESS) {
         CustomDialog(
-            title = "Registration Successful",
-            message = "Please click on the verification link sent to your email address.",
+            title = stringResource(R.string.registration_succesful),
+            message = stringResource(R.string.please_click),
             onDismiss = {
                 authViewModel.resetAuthState()
-                navController.navigate(Screen.SignInScreen.route)
+                navController.navigateSingleTopClear(route = Screen.SignInScreen.route)
             }
         )
     }
@@ -188,7 +190,10 @@ fun SignUpScreen(
                 onClick = {authViewModel.signUp()},
                 enabled = authViewModel.isvalid(),
                 modifier = modifier
-                    .width(224.dp)
+                    //.width(224.dp)
+
+                    .widthIn(max = 300.dp)
+                    .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp))
                     .background(
                         brush = Brush.linearGradient(

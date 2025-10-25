@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -59,6 +60,7 @@ import com.google.android.gms.common.api.ApiException
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.components.EditTextField
 import com.senaaksoy.moodify.navigation.Screen
+import com.senaaksoy.moodify.navigation.navigateSingleTopClear
 import com.senaaksoy.moodify.viewmodel.AuthViewModel
 
 @Composable
@@ -91,35 +93,42 @@ fun SignInScreen(
     LaunchedEffect(authState) {
         when (authState) {
             AuthState.INVALID_EMAIL_OR_PASSWORD -> {
-                Toast.makeText(context, "\n" +
-                        "Email or password is incorrect.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context, "\n" +
+                            "Email or password is incorrect.", Toast.LENGTH_SHORT
+                ).show()
                 authViewModel.resetAuthState()
             }
+
             AuthState.INVALID_CREDENTIALS -> {
-                Toast.makeText(context, "\n" +
-                        "Email or password is incorrect", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context, "\n" +
+                            "Email or password is incorrect", Toast.LENGTH_SHORT
+                ).show()
                 authViewModel.resetAuthState()
             }
+
             AuthState.FAILURE -> {
                 Toast.makeText(context, "An error has occurred.", Toast.LENGTH_SHORT).show()
                 authViewModel.resetAuthState()
             }
+
             AuthState.EMAIL_NOT_VERIFIED -> {
                 Toast.makeText(context, "Please verify your E-mail", Toast.LENGTH_SHORT).show()
                 authViewModel.resetAuthState()
             }
+
             AuthState.SUCCESS -> {
-                navController.navigate(Screen.HomeScreen.route) {
-                    popUpTo(Screen.SignInScreen.route) { inclusive = true }
-                }
+                navController.navigateSingleTopClear(route = Screen.HomeScreen.route)
             }
+
             else -> {}
         }
     }
 
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .background(
@@ -132,7 +141,7 @@ fun SignInScreen(
             )
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(vertical = 36.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -148,7 +157,7 @@ fun SignInScreen(
             )
             EditTextField(
                 value = authViewModel.inputEmail,
-                onValueChange = {authViewModel.updateInputEmail(it)},
+                onValueChange = { authViewModel.updateInputEmail(it) },
                 label = R.string.email,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next,
@@ -165,7 +174,7 @@ fun SignInScreen(
             )
             EditTextField(
                 value = authViewModel.inputPassword,
-                onValueChange = {authViewModel.updateInputPassword(it)},
+                onValueChange = { authViewModel.updateInputPassword(it) },
                 label = R.string.password,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done,
@@ -180,7 +189,7 @@ fun SignInScreen(
                 },
                 trailingIcon = {
                     Icon(
-                        imageVector = if(authViewModel.passwordVisibility)Icons.Filled.Visibility else Icons.Filled.VisibilityOff ,
+                        imageVector = if (authViewModel.passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
                         contentDescription = null,
                         modifier = modifier.clickable {
                             authViewModel.passwordVisibility = !authViewModel.passwordVisibility
@@ -195,19 +204,24 @@ fun SignInScreen(
             Text(
                 text = stringResource(R.string.forgot_password),
                 color = Color(0xFFaea0e4),
-                modifier = modifier
-                    .width(270.dp)
-                    .clickable {navController.navigate(Screen.ForgotPasswordScreen.route)},
+                modifier = Modifier
+                   // .width(270.dp)
+                    .widthIn(max = 280.dp)
+                    .fillMaxWidth()
+                    .clickable { navController.navigate(Screen.ForgotPasswordScreen.route) },
                 textAlign = TextAlign.End
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = {authViewModel.signIn()},
+                onClick = { authViewModel.signIn() },
                 enabled = authViewModel.isValidSignIn(),
-                modifier = modifier
-                    .width(224.dp)
+                modifier = Modifier
+                    //.width(224.dp)
+
+                    .widthIn(max = 300.dp)
+                    .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp))
                     .background(
                         brush = Brush.linearGradient(
@@ -230,9 +244,14 @@ fun SignInScreen(
 
                     authViewModel.startGoogleSignIn {
                         googleSignInLauncher.launch(authViewModel.getGoogleSignInIntent())
-                    }},
-                modifier = modifier
-                    .width(224.dp)
+                    }
+                    
+                },
+                modifier = Modifier
+                   // .width(224.dp)
+
+                    .widthIn(max = 300.dp)
+                    .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp)),
                 colors = ButtonDefaults.outlinedButtonColors(
                     containerColor = MaterialTheme.colorScheme.onPrimary
@@ -242,7 +261,7 @@ fun SignInScreen(
                     painter = painterResource(R.drawable.google),
                     contentDescription = null,
                     tint = Color.Unspecified,
-                    modifier = modifier
+                    modifier = Modifier
                         .width(18.dp)
                         .height(18.dp)
                 )
@@ -253,7 +272,7 @@ fun SignInScreen(
             }
 
             TextButton(
-                onClick = {navController.navigate(Screen.SignUpScreen.route)}
+                onClick = { navController.navigate(Screen.SignUpScreen.route) }
             ) {
                 Text(
                     text = stringResource(R.string.have_an_account_sign_up),
