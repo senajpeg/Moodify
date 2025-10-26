@@ -6,10 +6,18 @@ enum class Screen(val route : String) {
     SignUpScreen(route = "SignUpScreen"),
     HomeScreen(route = "HomeScreen"),
     PickMoodScreen(route = "PickMoodScreen"),
-    ShowPlaylistScreen(route="ShowPlaylistScreen"),
+    ShowPlaylistScreen(route = "ShowPlaylistScreen/{mood}"),
+    PlaylistTracksScreen(route = "PlaylistTracksScreen/{playlistId}/{playlistTitle}"),
     FavouritesScreen(route = "FavouritesScreen"),
     ForgotPasswordScreen(route = "ForgotPasswordScreen"),
-    ResetPasswordScreen(route = "ResetPasswordScreen?oobCode={oobCode}")
+    ResetPasswordScreen(route = "ResetPasswordScreen?oobCode={oobCode}");
 
-
+    companion object {
+        fun createShowPlaylistRoute(mood: String): String {
+            return "ShowPlaylistScreen/$mood"
+        }
+        fun createPlaylistTracksRoute(playlistId: Long, playlistTitle: String): String {
+            return "PlaylistTracksScreen/$playlistId/$playlistTitle"
+        }
+    }
 }

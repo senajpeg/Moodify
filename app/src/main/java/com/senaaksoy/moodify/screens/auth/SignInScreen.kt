@@ -85,7 +85,7 @@ fun SignInScreen(
         } catch (e: ApiException) {
             Toast.makeText(
                 context,
-                "Google Sign-In başarısız: ${e.message}",
+                context.getString(R.string.google_sign_in_failed, e.message),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -95,35 +95,30 @@ fun SignInScreen(
             AuthState.INVALID_EMAIL_OR_PASSWORD -> {
                 Toast.makeText(
                     context, "\n" +
-                            "Email or password is incorrect.", Toast.LENGTH_SHORT
+                            context.getString(R.string.email_or_password_is_incorrect), Toast.LENGTH_SHORT
                 ).show()
-                authViewModel.resetAuthState()
             }
-
             AuthState.INVALID_CREDENTIALS -> {
                 Toast.makeText(
                     context, "\n" +
-                            "Email or password is incorrect", Toast.LENGTH_SHORT
+                            context.getString(R.string.email_or_password_is_incorrect), Toast.LENGTH_SHORT
                 ).show()
-                authViewModel.resetAuthState()
             }
 
             AuthState.FAILURE -> {
-                Toast.makeText(context, "An error has occurred.", Toast.LENGTH_SHORT).show()
-                authViewModel.resetAuthState()
+                Toast.makeText(context, context.getString(R.string.an_error_has_occured), Toast.LENGTH_SHORT).show()
             }
 
             AuthState.EMAIL_NOT_VERIFIED -> {
-                Toast.makeText(context, "Please verify your E-mail", Toast.LENGTH_SHORT).show()
-                authViewModel.resetAuthState()
+                Toast.makeText(context, context.getString(R.string.please_verify_your_email), Toast.LENGTH_SHORT).show()
             }
 
             AuthState.SUCCESS -> {
                 navController.navigateSingleTopClear(route = Screen.HomeScreen.route)
             }
-
             else -> {}
         }
+        authViewModel.resetAuthState()
     }
 
 
@@ -205,7 +200,6 @@ fun SignInScreen(
                 text = stringResource(R.string.forgot_password),
                 color = Color(0xFFaea0e4),
                 modifier = Modifier
-                   // .width(270.dp)
                     .widthIn(max = 280.dp)
                     .fillMaxWidth()
                     .clickable { navController.navigate(Screen.ForgotPasswordScreen.route) },
@@ -218,8 +212,6 @@ fun SignInScreen(
                 onClick = { authViewModel.signIn() },
                 enabled = authViewModel.isValidSignIn(),
                 modifier = Modifier
-                    //.width(224.dp)
-
                     .widthIn(max = 350.dp)
                     .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp))
@@ -245,11 +237,9 @@ fun SignInScreen(
                     authViewModel.startGoogleSignIn {
                         googleSignInLauncher.launch(authViewModel.getGoogleSignInIntent())
                     }
-                    
+
                 },
                 modifier = Modifier
-                   // .width(224.dp)
-
                     .widthIn(max = 350.dp)
                     .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp)),

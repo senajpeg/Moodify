@@ -73,7 +73,7 @@ fun SignUpScreen(
     LaunchedEffect(authState) {
         when (authState) {
             AuthState.USER_ALREADY_EXISTS -> {
-                Toast.makeText(context, "This user already exists", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.this_user_already_exist), Toast.LENGTH_SHORT).show()
                 authViewModel.resetAuthState()
             }
             else -> {}
@@ -190,8 +190,6 @@ fun SignUpScreen(
                 onClick = {authViewModel.signUp()},
                 enabled = authViewModel.isvalid(),
                 modifier = modifier
-                    //.width(224.dp)
-
                     .widthIn(max = 300.dp)
                     .fillMaxWidth(0.6f)
                     .clip(shape = RoundedCornerShape(12.dp))

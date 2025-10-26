@@ -9,6 +9,11 @@
     <string name="continue_with_google">Continue with Google</string>
     <string name="already_have_an_account">Already have an account? Sign In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="happy">Happy</string>
+    <string name="sad">Sad</string>
+    <string name="energetic">Energetic</string>
+    <string name="chill">Chill</string>
+    <string name="generate">Generate</string>
     <string name="new_password">New Password</string>
     <string name="registration_succesful">Registration Successful</string>
     <string name="please_click">Please click on the verification link sent to your email address.</string>
@@ -17,6 +22,13 @@
     <string name="password_support">Password must consist of 6 characters.</string>
     <string name="title">Ai-supported music and playlist recommendations</string>
     <string name="get_started">Get Started</string>
+    <string name="email_or_password_is_incorrect">Email or password is incorrect.</string>
+    <string name="an_error_has_occured">An error has occurred.</string>
+    <string name="please_verify_your_email">Please verify your E-mail</string>
+    <string name="google_signin_failed">Gooele sign in failed.</string>
+    <string name="google_sign_in_failed">Google Sign-In failed: %1$s</string>
+    <string name="how_are_you_feeling">How are you feeling?</string>
+    <string name="this_user_already_exist">This user already exists</string>
     <string name="username_support_text">"Username must be 3-15 characters long and can only contain letters, numbers, underscores, or dots."</string>
     <string name="default_web_client_id">144602666421-nn02ood9tmnrph42nl93kum5cqc7g5on.apps.googleusercontent.com</string>
 

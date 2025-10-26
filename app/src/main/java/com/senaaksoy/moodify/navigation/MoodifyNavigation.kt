@@ -6,13 +6,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.senaaksoy.moodify.screens.FavouritesScreen
 import com.senaaksoy.moodify.screens.HomeScreen
 import com.senaaksoy.moodify.screens.PickMoodScreen
+import com.senaaksoy.moodify.screens.PlaylistTracksScreen
 import com.senaaksoy.moodify.screens.ShowPlaylistScreen
 import com.senaaksoy.moodify.screens.auth.ForgotPasswordScreen
 import com.senaaksoy.moodify.screens.auth.ResetPasswordScreen
@@ -49,11 +52,41 @@ fun MoodifyNavigation() {
             composable(route = Screen.SignUpScreen.route) {
                 SignUpScreen(navController=navController)
             }
+            composable(
+                route = Screen.PlaylistTracksScreen.route,
+                arguments = listOf(
+                    navArgument("playlistId") {
+                        type = NavType.LongType
+                    },
+                    navArgument("playlistTitle") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val playlistId = backStackEntry.arguments?.getLong("playlistId") ?: 0L
+                val playlistTitle = backStackEntry.arguments?.getString("playlistTitle") ?: ""
+                PlaylistTracksScreen(
+                    playlistId = playlistId,
+                    playlistTitle = playlistTitle,
+                    navController = navController
+                )
+            }
             composable(route = Screen.PickMoodScreen.route) {
                 PickMoodScreen(navController=navController)
             }
-            composable(route = Screen.ShowPlaylistScreen.route) {
-                ShowPlaylistScreen(navController = navController)
+            composable(
+                route = Screen.ShowPlaylistScreen.route,
+                arguments = listOf(
+                    navArgument("mood") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val mood = backStackEntry.arguments?.getString("mood") ?: ""
+                ShowPlaylistScreen(
+                    mood = mood,
+                    navController = navController
+                )
             }
             composable(route = Screen.FavouritesScreen.route) {
                 FavouritesScreen(navController = navController)

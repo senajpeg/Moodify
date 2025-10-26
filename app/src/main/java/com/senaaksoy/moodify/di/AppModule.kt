@@ -7,6 +7,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.senaaksoy.moodify.R
+import com.senaaksoy.moodify.api.DeezerApi
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +47,19 @@ object AppModule {
         googleSignInOptions: GoogleSignInOptions
     ): GoogleSignInClient {
         return GoogleSignIn.getClient(context, googleSignInOptions)
+    }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DeezerModule {
+    @Provides
+    @Singleton
+    fun provideDeezerApi(): DeezerApi {
+        return Retrofit.Builder()
+            .baseUrl("https://api.deezer.com/")
+            .addConverterFactory(GsonConverterFactory.create()) //JSON->Kotlin
+            .build()
+            .create(DeezerApi::class.java)
     }
 }
