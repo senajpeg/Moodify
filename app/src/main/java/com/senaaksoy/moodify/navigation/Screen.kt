@@ -6,11 +6,13 @@ enum class Screen(val route : String) {
     SignUpScreen(route = "SignUpScreen"),
     HomeScreen(route = "HomeScreen"),
     PickMoodScreen(route = "PickMoodScreen"),
+    ProfileScreen(route = "ProfileScreen"),
     ShowPlaylistScreen(route = "ShowPlaylistScreen/{mood}"),
     PlaylistTracksScreen(route = "PlaylistTracksScreen/{playlistId}/{playlistTitle}"),
     FavouritesScreen(route = "FavouritesScreen"),
     ForgotPasswordScreen(route = "ForgotPasswordScreen"),
     ResetPasswordScreen(route = "ResetPasswordScreen?oobCode={oobCode}");
+
 
     companion object {
         fun createShowPlaylistRoute(mood: String): String {

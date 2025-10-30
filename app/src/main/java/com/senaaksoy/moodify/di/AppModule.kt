@@ -6,8 +6,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.api.DeezerApi
+import com.senaaksoy.moodify.repository.FavoritesRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import dagger.Module
@@ -28,6 +30,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFirebaseAuth() : FirebaseAuth = FirebaseAuth.getInstance()
+
+    @Provides
+    @Singleton
+    fun provideFirebaseStorage(): FirebaseStorage = FirebaseStorage.getInstance()
+
 
     @Provides
     @Singleton
@@ -61,5 +68,18 @@ object DeezerModule {
             .addConverterFactory(GsonConverterFactory.create()) //JSON->Kotlin
             .build()
             .create(DeezerApi::class.java)
+    }
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    object RepositoryModule {
+        @Provides
+        @Singleton
+        fun provideFavoritesRepository(
+            firestore: FirebaseFirestore,
+            auth: FirebaseAuth
+        ): FavoritesRepository {
+            return FavoritesRepository(firestore, auth)
+        }
     }
 }

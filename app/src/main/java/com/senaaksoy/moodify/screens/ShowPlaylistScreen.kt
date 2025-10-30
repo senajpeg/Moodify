@@ -26,7 +26,6 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.senaaksoy.moodify.navigation.Screen
 import com.senaaksoy.moodify.viewmodel.DeezerViewModel
-
 @Composable
 fun ShowPlaylistScreen(
     mood: String,
@@ -40,7 +39,7 @@ fun ShowPlaylistScreen(
         deezerViewModel.fetchPlaylists(mood)
     }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
@@ -52,96 +51,69 @@ fun ShowPlaylistScreen(
                 )
             )
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Top Bar
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+        if (isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
             ) {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "$mood Playlists",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
+                CircularProgressIndicator(
+                    color = Color(0xFFE37EF3)
                 )
             }
-
-            if (isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        color = Color(0xFFE37EF3)
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(bottom = 16.dp)
-                ) {
-                    items(playlists) { playlist ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp)),
-                            onClick = {
-                                navController.navigate(
-                                    Screen.createPlaylistTracksRoute(
-                                        playlistId = playlist.id,
-                                        playlistTitle = playlist.title
-                                    )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(bottom = 16.dp)
+            ) {
+                items(playlists) { playlist ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp)),
+                        onClick = {
+                            navController.navigate(
+                                Screen.createPlaylistTracksRoute(
+                                    playlistId = playlist.id,
+                                    playlistTitle = playlist.title
                                 )
-                            },
-                            colors = CardDefaults.cardColors(
-                                containerColor = Color(0xFF2F285A)
-                            ),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                            )
+                        },
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFF2F285A)
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(12.dp)
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(12.dp)
+                            Image(
+                                painter = rememberAsyncImagePainter(playlist.pictureMedium),
+                                contentDescription = playlist.title,
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.Crop
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Column(
+                                modifier = Modifier.weight(1f)
                             ) {
-                                Image(
-                                    painter = rememberAsyncImagePainter(playlist.pictureMedium),
-                                    contentDescription = playlist.title,
-                                    modifier = Modifier
-                                        .size(80.dp)
-                                        .clip(RoundedCornerShape(8.dp)),
-                                    contentScale = ContentScale.Crop
+                                Text(
+                                    text = playlist.title,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
                                 )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-                                    Text(
-                                        text = playlist.title,
-                                        fontSize = 16.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color.White
-                                    )
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = "${playlist.nbTracks ?: 0} tracks",
-                                        fontSize = 14.sp,
-                                        color = Color(0xFFB685F1)
-                                    )
-                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = "${playlist.nbTracks ?: 0} tracks",
+                                    fontSize = 14.sp,
+                                    color = Color(0xFFB685F1)
+                                )
                             }
                         }
                     }

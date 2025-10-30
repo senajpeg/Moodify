@@ -2,6 +2,12 @@ package com.senaaksoy.moodify.model
 
 import com.google.gson.annotations.SerializedName
 
+data class DeezerSearchResponse(
+    val data: List<DeezerPlaylist>,
+    val total: Int
+)
+
+
 data class DeezerPlaylist(
     val id: Long,
     val title: String,

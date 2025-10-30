@@ -14,6 +14,14 @@
     <string name="energetic">Energetic</string>
     <string name="chill">Chill</string>
     <string name="generate">Generate</string>
+    <string name="username_">Username:</string>
+    <string name="email_">Email:</string>
+    <string name="n_a">"N/A"</string>
+    <string name="back">Back</string>
+    <string name="pick_mood">Pick Mood</string>
+    <string name="no_favorites_yet">No Favorites Yet</string>
+    <string name="add_songs_to_your_favorites">Add songs to your favorites
+to see them here</string>
     <string name="new_password">New Password</string>
     <string name="registration_succesful">Registration Successful</string>
     <string name="please_click">Please click on the verification link sent to your email address.</string>

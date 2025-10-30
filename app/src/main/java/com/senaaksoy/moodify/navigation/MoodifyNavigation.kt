@@ -1,25 +1,28 @@
 package com.senaaksoy.moodify.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.senaaksoy.moodify.R
+import com.senaaksoy.moodify.components.MoodifyBottomBar
+import com.senaaksoy.moodify.components.MoodifyTopBar
+import com.senaaksoy.moodify.components.shouldShowBottomBar
 import com.senaaksoy.moodify.screens.FavouritesScreen
 import com.senaaksoy.moodify.screens.HomeScreen
 import com.senaaksoy.moodify.screens.PickMoodScreen
 import com.senaaksoy.moodify.screens.PlaylistTracksScreen
+import com.senaaksoy.moodify.screens.ProfileScreen
 import com.senaaksoy.moodify.screens.ShowPlaylistScreen
 import com.senaaksoy.moodify.screens.auth.ForgotPasswordScreen
 import com.senaaksoy.moodify.screens.auth.ResetPasswordScreen
-
 import com.senaaksoy.moodify.screens.auth.SignInScreen
 import com.senaaksoy.moodify.screens.auth.SignUpScreen
 import com.senaaksoy.moodify.screens.splash.SplashScreen
@@ -30,13 +33,32 @@ fun MoodifyNavigation() {
     val currentBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentRoute = currentBackStackEntry?.destination?.route ?: Screen.HomeScreen.route
 
+    val showBottomBar = shouldShowBottomBar(currentRoute)
+
+
     Scaffold(
-        topBar = {}
+        topBar = {
+            when {
+                currentRoute.startsWith("ShowPlaylistScreen") -> {
+                    val mood = currentBackStackEntry?.arguments?.getString("mood") ?: "Playlists"
+                    MoodifyTopBar(title = mood, navController = navController)
+                }
+                currentRoute.startsWith("PlaylistTracksScreen") -> {
+                    val title = currentBackStackEntry?.arguments?.getString("playlistTitle") ?: "Tracks"
+                    MoodifyTopBar(title = title, navController = navController)
+                }
+                else -> {}
+            }
+        },
+        bottomBar = {
+            if (showBottomBar) {
+                MoodifyBottomBar(navController = navController,
+                    currentRoute = currentRoute)
+            }
+        }
     ) { paddingValues ->
         NavHost(
-            modifier = Modifier
-                .padding(paddingValues)
-                ,
+            modifier = Modifier.padding(paddingValues),
             navController = navController,
             startDestination = Screen.SplashScreen.route
         ) {
@@ -51,6 +73,9 @@ fun MoodifyNavigation() {
             }
             composable(route = Screen.SignUpScreen.route) {
                 SignUpScreen(navController=navController)
+            }
+            composable(route = Screen.ProfileScreen.route) {
+                ProfileScreen(navController=navController)
             }
             composable(
                 route = Screen.PlaylistTracksScreen.route,

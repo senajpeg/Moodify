@@ -2,9 +2,9 @@ package com.senaaksoy.moodify.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,9 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +38,6 @@ import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.components.Mood
 import com.senaaksoy.moodify.components.MoodCard
 import com.senaaksoy.moodify.navigation.Screen
-import com.senaaksoy.moodify.navigation.navigateSingleTopClear
 import com.senaaksoy.moodify.viewmodel.DeezerViewModel
 
 @Composable
@@ -58,7 +54,7 @@ fun PickMoodScreen(
         Mood(stringResource(R.string.chill), R.drawable.chill)
     )
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(
@@ -68,76 +64,73 @@ fun PickMoodScreen(
                         Color(0xFF2D1B55)
                     )
                 )
-            )
-            .padding(24.dp)
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(52.dp))
+        Spacer(modifier = Modifier.fillMaxHeight(0.09f))
 
-            Text(
-                text = stringResource(R.string.how_are_you_feeling),
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                style = TextStyle(
+        Text(
+            text = stringResource(R.string.how_are_you_feeling),
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            style = TextStyle(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color(0xFFE37EF3),
+                        Color(0xFF68B3F6)
+                    )
+                )
+            )
+        )
+
+        Spacer(modifier = Modifier.fillMaxHeight(0.09f))
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(horizontal = 24.dp)
+        ) {
+            items(moods) { mood ->
+                MoodCard(
+                    mood = mood,
+                    isSelected = selectedMood == mood.name,
+                    onMoodClick = { deezerviewModel.selectMood(mood.name) }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Button(
+            onClick = {
+                selectedMood?.let { mood ->
+                    navController.navigate(Screen.createShowPlaylistRoute(mood))
+                }
+            },
+            enabled = selectedMood != null,
+            modifier = Modifier
+                .fillMaxWidth(0.65f)
+                .widthIn(max = 300.dp)
+                .padding(bottom = 24.dp)
+                .clip(shape = RoundedCornerShape(12.dp))
+                .background(
                     brush = Brush.linearGradient(
                         colors = listOf(
-                            Color(0xFFE37EF3),
-                            Color(0xFF68B3F6)
+                            Color(0xFFA065E3),
+                            Color(0xFF5E8BCB)
                         )
                     )
-                )
+                ),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
             )
-
-            Spacer(modifier = Modifier.height(122.dp))
-
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
-            ) {
-                items(moods) { mood ->
-                    MoodCard(
-                        mood = mood,
-                        isSelected = selectedMood == mood.name,
-                        onMoodClick = { deezerviewModel.selectMood(mood.name) }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(56.dp))
-
-            Button(
-                onClick = {
-                    selectedMood?.let { mood ->
-                        navController.navigateSingleTopClear(Screen.createShowPlaylistRoute(mood))
-                    }
-                },
-                enabled = selectedMood != null,
-                modifier = Modifier
-                    .fillMaxWidth(0.65f)
-                    .widthIn(max = 300.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                Color(0xFFA065E3),
-                                Color(0xFF5E8BCB)
-                            )
-                        )
-                    ),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    disabledContainerColor = Color.Gray.copy(alpha = 0.3f)
-                )
-            ) {
-                Text(text = stringResource(R.string.generate))
-            }
+        ) {
+            Text(text = stringResource(R.string.generate))
         }
     }
 }

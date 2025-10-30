@@ -1,5 +1,6 @@
 package com.senaaksoy.moodify.viewmodel
 
+import android.net.Uri
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +26,6 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
     val currentUser get() = authRepository.currentUser
 
-    //  UI Input State Variables
     var inputEmail by mutableStateOf("")
         private set
     var inputPassword by mutableStateOf("")
@@ -37,24 +37,69 @@ class AuthViewModel @Inject constructor(
     var confirmPasswordVisibility by mutableStateOf(false)
     var showDialog by mutableStateOf(false)
 
-    //  Update Input Fields
+    private val _selectedImageUrl = MutableStateFlow<String?>(null)
+    val selectedImageUrl: StateFlow<String?> = _selectedImageUrl.asStateFlow()
+
+    private val _isUploadingImage = MutableStateFlow(false)
+    val isUploadingImage: StateFlow<Boolean> = _isUploadingImage.asStateFlow()
+
+    init {
+        loadProfileImage()
+    }
+
+    private fun loadProfileImage() {
+        val uid = currentUser?.uid ?: return
+        viewModelScope.launch {
+            try {
+                val url = authRepository.getProfileImageUrl(uid)
+                _selectedImageUrl.value = url
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun uploadProfileImage(uri: Uri) {
+        val uid = currentUser?.uid ?: return
+        viewModelScope.launch {
+            _isUploadingImage.value = true
+            try {
+                val url = authRepository.uploadProfileImage(uid, uri)
+                authRepository.saveProfileImageUrl(uid, url)
+                _selectedImageUrl.value = url
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                _isUploadingImage.value = false
+            }
+        }
+    }
+
     fun updateInputPassword(password: String) {
         inputPassword = password
     }
+
     fun updateUsername(username: String) {
         inputUsername = username
     }
+
     fun updateInputEmail(email: String) {
         inputEmail = email
     }
-    fun updateNewPassword(password: String) { newPassword = password }
-    fun updateConfirmPassword(password: String) { confirmPassword = password }
 
-    //AuthState
+    fun updateNewPassword(password: String) {
+        newPassword = password
+    }
+
+    fun updateConfirmPassword(password: String) {
+        confirmPassword = password
+    }
+
     private val _authState = MutableStateFlow(AuthState.EMPTY)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     fun passwordsMatch(): Boolean = newPassword == confirmPassword && newPassword.length >= 6
+
     fun resetPassword(oobCode: String) {
         viewModelScope.launch {
             try {
@@ -67,7 +112,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    // Google Sign-In fonksiyonları
     fun getGoogleSignInIntent() = googleSignInClient.signInIntent
 
     fun signInWithGoogle(account: GoogleSignInAccount) {
@@ -79,11 +123,12 @@ class AuthViewModel @Inject constructor(
                 val isRegistered = authRepository.isUserRegistered(email)
                 if (isRegistered) {
                     authRepository.signInWithGoogle(account)
+                    loadProfileImage()
                     AuthState.SUCCESS
                 } else {
-                    // Yeni kullanıcı - kaydet
                     authRepository.signInWithGoogle(account)
                     authRepository.saveGoogleUser(account)
+                    loadProfileImage()
                     AuthState.SUCCESS
                 }
             } catch (e: Exception) {
@@ -91,6 +136,7 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
     fun startGoogleSignIn(onReady: () -> Unit) {
         viewModelScope.launch {
             try {
@@ -101,12 +147,11 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
     fun signUp() {
         viewModelScope.launch {
             _authState.value = try {
                 authRepository.registerUser(inputEmail, inputPassword, inputUsername)
-
-
                 resetInputs()
                 AuthState.SUCCESS
             } catch (e: Exception) {
@@ -122,23 +167,22 @@ class AuthViewModel @Inject constructor(
     fun signIn() {
         viewModelScope.launch {
             _authState.value = try {
-                // Firebase ile giriş yap
                 val result = authRepository.signIn(inputEmail, inputPassword)
                 val user = result.user
 
-                // Kullanıcı var mı ve e-posta doğrulandı mı?
                 if (user != null && user.isEmailVerified) {
+                    loadProfileImage()
                     AuthState.SUCCESS
                 } else {
-                    // Eğer kullanıcı yoksa veya e-posta doğrulanmadıysa çıkış yap
                     authRepository.logOut()
                     AuthState.EMAIL_NOT_VERIFIED
                 }
             } catch (e: Exception) {
-                // Hataları yönet
                 when (e) {
-                    is com.google.firebase.auth.FirebaseAuthInvalidUserException -> AuthState.INVALID_CREDENTIALS
-                    is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException -> AuthState.INVALID_EMAIL_OR_PASSWORD
+                    is com.google.firebase.auth.FirebaseAuthInvalidUserException ->
+                        AuthState.INVALID_CREDENTIALS
+                    is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
+                        AuthState.INVALID_EMAIL_OR_PASSWORD
                     else -> AuthState.FAILURE
                 }
             }
@@ -148,6 +192,7 @@ class AuthViewModel @Inject constructor(
     fun logOut() {
         authRepository.logOut()
         _authState.value = AuthState.EMPTY
+        _selectedImageUrl.value = null
     }
 
     fun resetAuthState() {
@@ -165,42 +210,29 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-    // Validation Functions
     fun isvalidEmail() = Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches()
-    fun isValidUsername() : Boolean {
+
+    fun isValidUsername(): Boolean {
         val regex = "^(?![_.])[A-Za-z0-9._]{3,15}(?<![_.])$".toRegex()
         return inputUsername.matches(regex)
     }
+
     fun isvalidPassword() = if (inputPassword.isNotBlank()) {
-        inputPassword.length == 6
+        inputPassword.length >= 6
     } else {
         false
     }
-    fun isvalid() =
-        isvalidPassword() && isvalidEmail() && isValidUsername()
+
+    fun isvalid() = isvalidPassword() && isvalidEmail() && isValidUsername()
 
     fun isValidSignIn(): Boolean {
         return inputEmail.isNotBlank() && inputPassword.isNotBlank()
     }
 
-    //  Supporting Text States
     fun emailSupportText() = !isvalidEmail() && inputEmail.isNotBlank()
     fun passwordSupportText() = !isvalidPassword() && inputPassword.isNotBlank()
     fun usernameSupportText() = !isValidUsername() && inputUsername.isNotBlank()
 
-
-    //  UI Helper Variables (password visibility)
     var passwordVisibility by mutableStateOf(false)
 
     fun resetInputs() {
@@ -208,5 +240,4 @@ class AuthViewModel @Inject constructor(
         inputPassword = ""
         inputUsername = ""
     }
-
 }
