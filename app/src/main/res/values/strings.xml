@@ -22,6 +22,33 @@
     <string name="no_favorites_yet">No Favorites Yet</string>
     <string name="add_songs_to_your_favorites">Add songs to your favorites
 to see them here</string>
+    <!-- Bildirim Başlıkları -->
+    <string name="notification_morning_title">Günlük Hatırlatma</string>
+    <string name="notification_afternoon_title">Gün Ortası</string>
+    <string name="notification_evening_title">Akşam Özeti</string>
+    <string name="notification_weekly_title">Haftalık Özet</string>
+
+    <!-- Bildirim Mesajları -->
+    <string name="notification_morning_message">Bugünkü ruh halini seç!</string>
+    <string name="notification_afternoon_message">Nasıl hissediyorsun?</string>
+    <string name="notification_evening_message">Bugün nasıldı?</string>
+    <string name="notification_weekly_message_default">Bu hafta en çok mutlu hissediyordun</string>
+
+    <!-- Kanal bilgisi -->
+    <string name="notification_channel_name">Moodify Hatırlatmaları</string>
+    <string name="notification_channel_description">Günlük ve haftalık ruh hali hatırlatmaları</string>
+    <!-- Reminder Work Names -->
+    <string name="work_name_morning">morning_reminder</string>
+    <string name="work_name_afternoon">afternoon_reminder</string>
+    <string name="work_name_evening">evening_reminder</string>
+    <string name="work_name_weekly">weekly_reminder</string>
+
+    <!-- Reminder Descriptions -->
+    <string name="reminder_morning_desc">Sabah hatırlatıcısı (09:00)</string>
+    <string name="reminder_afternoon_desc">Öğle hatırlatıcısı (13:00)</string>
+    <string name="reminder_evening_desc">Akşam hatırlatıcısı (20:00)</string>
+    <string name="reminder_weekly_desc">Haftalık özet (Pazar 18:00)</string>
+
     <string name="new_password">New Password</string>
     <string name="registration_succesful">Registration Successful</string>
     <string name="please_click">Please click on the verification link sent to your email address.</string>

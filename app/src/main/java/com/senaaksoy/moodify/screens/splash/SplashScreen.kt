@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.navigation.Screen
 import com.senaaksoy.moodify.navigation.navigateSingleTopClear
+import com.senaaksoy.moodify.utils.RequestNotificationPermission
 import kotlinx.coroutines.delay
 
 @Composable
@@ -23,6 +24,8 @@ fun SplashScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
+    // İlk açılışta bildirim izni iste
+    RequestNotificationPermission()
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {

@@ -10,6 +10,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.api.DeezerApi
 import com.senaaksoy.moodify.repository.FavoritesRepository
+import com.senaaksoy.moodify.utils.MoodPreferenceManager
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import dagger.Module
@@ -54,6 +55,13 @@ object AppModule {
         googleSignInOptions: GoogleSignInOptions
     ): GoogleSignInClient {
         return GoogleSignIn.getClient(context, googleSignInOptions)
+    }
+    @Provides
+    @Singleton
+    fun provideMoodPreferenceManager(
+        @ApplicationContext context: Context
+    ): MoodPreferenceManager {
+        return MoodPreferenceManager(context)
     }
 }
 

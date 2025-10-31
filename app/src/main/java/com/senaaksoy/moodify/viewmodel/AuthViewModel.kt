@@ -26,6 +26,7 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
     val currentUser get() = authRepository.currentUser
 
+    //GİRİŞ / KAYIT FORM ALANLARI
     var inputEmail by mutableStateOf("")
         private set
     var inputPassword by mutableStateOf("")
@@ -37,6 +38,7 @@ class AuthViewModel @Inject constructor(
     var confirmPasswordVisibility by mutableStateOf(false)
     var showDialog by mutableStateOf(false)
 
+    //PROFİL FOTOĞRAFI YÖNETİMİ
     private val _selectedImageUrl = MutableStateFlow<String?>(null)
     val selectedImageUrl: StateFlow<String?> = _selectedImageUrl.asStateFlow()
 
@@ -75,6 +77,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    //FORM GÜNCELLEME FONKSİYONLARI
     fun updateInputPassword(password: String) {
         inputPassword = password
     }
@@ -95,6 +98,7 @@ class AuthViewModel @Inject constructor(
         confirmPassword = password
     }
 
+    //AUTH DURUM YÖNETİMİ
     private val _authState = MutableStateFlow(AuthState.EMPTY)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
@@ -158,6 +162,7 @@ class AuthViewModel @Inject constructor(
                 when {
                     e.message?.contains("email") == true ->
                         AuthState.USER_ALREADY_EXISTS
+
                     else -> AuthState.FAILURE
                 }
             }
@@ -181,8 +186,10 @@ class AuthViewModel @Inject constructor(
                 when (e) {
                     is com.google.firebase.auth.FirebaseAuthInvalidUserException ->
                         AuthState.INVALID_CREDENTIALS
+
                     is com.google.firebase.auth.FirebaseAuthInvalidCredentialsException ->
                         AuthState.INVALID_EMAIL_OR_PASSWORD
+
                     else -> AuthState.FAILURE
                 }
             }
@@ -195,9 +202,7 @@ class AuthViewModel @Inject constructor(
         _selectedImageUrl.value = null
     }
 
-    fun resetAuthState() {
-        _authState.value = AuthState.EMPTY
-    }
+    fun resetAuthState() { _authState.value = AuthState.EMPTY }
 
     fun sendPasswordResetEmail() {
         viewModelScope.launch {
@@ -210,6 +215,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    //GEÇERLİLİK KONTROLLERİ
     fun isvalidEmail() = Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches()
 
     fun isValidUsername(): Boolean {
@@ -217,18 +223,12 @@ class AuthViewModel @Inject constructor(
         return inputUsername.matches(regex)
     }
 
-    fun isvalidPassword() = if (inputPassword.isNotBlank()) {
-        inputPassword.length >= 6
-    } else {
-        false
-    }
-
+    fun isvalidPassword() = if (inputPassword.isNotBlank()) { inputPassword.length >= 6 } else { false }
     fun isvalid() = isvalidPassword() && isvalidEmail() && isValidUsername()
-
     fun isValidSignIn(): Boolean {
         return inputEmail.isNotBlank() && inputPassword.isNotBlank()
     }
-
+    //YARDIMCI METODLAR (UI Destekleri)
     fun emailSupportText() = !isvalidEmail() && inputEmail.isNotBlank()
     fun passwordSupportText() = !isvalidPassword() && inputPassword.isNotBlank()
     fun usernameSupportText() = !isValidUsername() && inputUsername.isNotBlank()

@@ -20,7 +20,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,16 +42,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.senaaksoy.moodify.R
+import com.senaaksoy.moodify.utils.RequestNotificationPermission
 import com.senaaksoy.moodify.viewmodel.AuthViewModel
+import com.senaaksoy.moodify.viewmodel.NotificationViewModel
 
 @Composable
 fun ProfileScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel(),
+    notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
+    // Bildirim izni iste
+    RequestNotificationPermission()
+
     val currentUser = authViewModel.currentUser
     val selectedImageUrl by authViewModel.selectedImageUrl.collectAsState()
     val isUploadingImage by authViewModel.isUploadingImage.collectAsState()
+    val notificationsEnabled by notificationViewModel.notificationsEnabled.collectAsState()
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -72,6 +82,7 @@ fun ProfileScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
+        // Profile Image
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -114,6 +125,7 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
+        // User Info
         ProfileInfoRow(
             label = stringResource(R.string.username_),
             value = currentUser?.displayName ?: stringResource(R.string.n_a)
@@ -124,6 +136,20 @@ fun ProfileScreen(
         ProfileInfoRow(
             label = stringResource(R.string.email_),
             value = currentUser?.email ?: stringResource(R.string.n_a)
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Divider(
+            color = Color.White.copy(alpha = 0.2f),
+            thickness = 1.dp,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
+        // Notification Settings
+        NotificationSettingsRow(
+            enabled = notificationsEnabled,
+            onToggle = { notificationViewModel.toggleNotifications(it) }
         )
     }
 }
@@ -149,6 +175,46 @@ fun ProfileInfoRow(label: String, value: String) {
             color = Color.White,
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal
+        )
+    }
+}
+
+@Composable
+fun NotificationSettingsRow(
+    enabled: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "Bildirimler",
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Günlük ve haftalık ruh hali hatırlatmaları",
+                color = Color.White.copy(alpha = 0.6f),
+                fontSize = 12.sp
+            )
+        }
+
+        Switch(
+            checked = enabled,
+            onCheckedChange = onToggle,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color(0xFF6C63FF),
+                checkedTrackColor = Color(0xFF6C63FF).copy(alpha = 0.5f),
+                uncheckedThumbColor = Color.White.copy(alpha = 0.6f),
+                uncheckedTrackColor = Color.White.copy(alpha = 0.2f)
+            )
         )
     }
 }

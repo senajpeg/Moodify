@@ -39,7 +39,6 @@ class AuthRepository @Inject constructor(
     }
 
     suspend fun uploadProfileImage(uid: String, imageUri: Uri): String {
-        // URI'den geçici bir dosya oluştur
         val inputStream = context.contentResolver.openInputStream(imageUri)
             ?: throw Exception("Resim yüklenemedi")
 
@@ -52,16 +51,12 @@ class AuthRepository @Inject constructor(
                 }
             }
 
-            // Storage'a yükle
             val storageRef = storage.reference.child("profile_images/$uid.jpg")
             val uploadTask = storageRef.putFile(Uri.fromFile(tempFile)).await()
-
-            // Download URL'i al
             val downloadUrl = storageRef.downloadUrl.await().toString()
 
             return downloadUrl
         } finally {
-            // Geçici dosyayı temizle
             if (tempFile.exists()) {
                 tempFile.delete()
             }

@@ -52,6 +52,12 @@ dependencies {
     //workManager
     implementation ("androidx.work:work-runtime-ktx:2.10.1")
     implementation ("androidx.core:core-ktx:1.12.0")
+    // Hilt WorkManager entegrasyonu
+    implementation("androidx.hilt:hilt-work:1.1.0")
+    kapt("androidx.hilt:hilt-compiler:1.1.0")
+
+    // DataStore (preferences için)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
     //di
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")

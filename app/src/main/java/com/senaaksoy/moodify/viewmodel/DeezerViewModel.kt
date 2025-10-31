@@ -22,13 +22,28 @@ class DeezerViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
+    init {
+        loadFavorites()
+    }
+
+    //mod seçimi verileri
     private val _selectedMood = MutableStateFlow<String?>(null)
     val selectedMood: StateFlow<String?> = _selectedMood.asStateFlow()
 
-    fun selectMood(mood: String) {
-        _selectedMood.value = mood
+    fun selectMood(mood: String) { _selectedMood.value = mood
+        saveMoodToFirebase(mood) }
+
+    private fun saveMoodToFirebase(mood: String) {
+        viewModelScope.launch {
+            try {
+                repository.saveMood(mood)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
+    //PLAYLIST & TRACK VERİLERİ
     private val _playlists = MutableStateFlow<List<DeezerPlaylist>>(emptyList())
     val playlists: StateFlow<List<DeezerPlaylist>> = _playlists.asStateFlow()
 
@@ -41,22 +56,17 @@ class DeezerViewModel @Inject constructor(
     private val _isLoadingTracks = MutableStateFlow(false)
     val isLoadingTracks: StateFlow<Boolean> = _isLoadingTracks.asStateFlow()
 
-    private val _currentPlayingTrackId = MutableStateFlow<Long?>(null)
-    val currentPlayingTrackId: StateFlow<Long?> = _currentPlayingTrackId.asStateFlow()
-
+    //FAVORİLER
     private val _favoriteTrackIds = MutableStateFlow<Set<Long>>(emptySet())
     val favoriteTrackIds: StateFlow<Set<Long>> = _favoriteTrackIds.asStateFlow()
 
     private val _favorites = MutableStateFlow<List<FavoriteTrack>>(emptyList())
     val favorites: StateFlow<List<FavoriteTrack>> = _favorites.asStateFlow()
 
+    //MÜZİK OYNATMA (MediaPlayer)
     private var mediaPlayer: MediaPlayer? = null
-
-
-
-    init {
-        loadFavorites()
-    }
+    private val _currentPlayingTrackId = MutableStateFlow<Long?>(null)
+    val currentPlayingTrackId: StateFlow<Long?> = _currentPlayingTrackId.asStateFlow()
 
     private fun loadFavorites() {
         viewModelScope.launch {
@@ -78,27 +88,12 @@ class DeezerViewModel @Inject constructor(
         }
     }
 
-    /*fun fetchPlaylists(mood: String) {
-        viewModelScope.launch {
-            _isLoadingPlaylists.value = true
-            try {
-                val response = repository.getPlaylistsByMood(mood)
-                _playlists.value = response.data
-            } catch (e: Exception) {
-                _playlists.value = emptyList()
-            } finally {
-                _isLoadingPlaylists.value = false
-            }
-        }
-    }*/
     fun fetchPlaylists(mood: String) {
         viewModelScope.launch {
             _isLoadingPlaylists.value = true
             try {
-                // İngilizce mood sorgusu
                 val englishResponse = repository.getPlaylistsByMood(mood)
 
-                //  Türkçe karşılığı
                 val turkishMood = when (mood.lowercase()) {
                     "happy" -> "mutlu"
                     "sad" -> "üzgün"
@@ -118,7 +113,6 @@ class DeezerViewModel @Inject constructor(
             }
         }
     }
-
 
     fun fetchPlaylistTracks(playlistId: Long) {
         viewModelScope.launch {
