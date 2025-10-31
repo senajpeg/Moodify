@@ -4,7 +4,9 @@ mood.
  Technologies:
  
  AI Integration: Generates playlist recommendations based on the user’s mood.
+ 
  Deezer API (via Retrofit): Fetches mood-based songs and playlists for free without requiring user login.
+ 
  Firebase Auth (Google Sign-In, Email/Password, Password Reset, Email Verification)
  Firebase Firestore, Firebase Storage (profile pictures)
  WorkManager: Sends reminder notifications (“Your evening music suggestion is ready”).
