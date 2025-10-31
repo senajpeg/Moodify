@@ -1,6 +1,8 @@
  An Android application that offers AI-powered music and playlist recommendations based on the user's 
 mood.
+
  Technologies:
+ 
  AI Integration: Generates playlist recommendations based on the user’s mood.
  Deezer API (via Retrofit): Fetches mood-based songs and playlists for free without requiring user login.
  Firebase Auth (Google Sign-In, Email/Password, Password Reset, Email Verification)
