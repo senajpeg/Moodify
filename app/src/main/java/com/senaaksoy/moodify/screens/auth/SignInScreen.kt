@@ -219,7 +219,7 @@ fun SignInScreen(
                         brush = Brush.linearGradient(
                             colors = listOf(
                                 Color(0xFFA065E3),
-                                Color(0xFF5E8BCB)
+                               Color(0xFF5E8BCB)
                             )
                         )
                     ),

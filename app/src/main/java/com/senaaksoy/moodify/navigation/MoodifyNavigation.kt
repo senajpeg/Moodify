@@ -4,27 +4,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.components.MoodifyBottomBar
 import com.senaaksoy.moodify.components.MoodifyTopBar
 import com.senaaksoy.moodify.components.shouldShowBottomBar
-import com.senaaksoy.moodify.screens.FavouritesScreen
-import com.senaaksoy.moodify.screens.HomeScreen
-import com.senaaksoy.moodify.screens.PickMoodScreen
-import com.senaaksoy.moodify.screens.PlaylistTracksScreen
-import com.senaaksoy.moodify.screens.ProfileScreen
-import com.senaaksoy.moodify.screens.ShowPlaylistScreen
 import com.senaaksoy.moodify.screens.auth.ForgotPasswordScreen
 import com.senaaksoy.moodify.screens.auth.ResetPasswordScreen
 import com.senaaksoy.moodify.screens.auth.SignInScreen
 import com.senaaksoy.moodify.screens.auth.SignUpScreen
+import com.senaaksoy.moodify.screens.favorites.FavouritesScreen
+import com.senaaksoy.moodify.screens.main.home.HomeScreen
+import com.senaaksoy.moodify.screens.main.mood.PickMoodScreen
+import com.senaaksoy.moodify.screens.main.playlist.PlaylistTracksScreen
+import com.senaaksoy.moodify.screens.main.playlist.ShowPlaylistScreen
+import com.senaaksoy.moodify.screens.main.profile.ProfileScreen
 import com.senaaksoy.moodify.screens.splash.SplashScreen
 
 @Composable

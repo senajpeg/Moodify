@@ -2,16 +2,22 @@ package com.senaaksoy.moodify.screens.splash
 
 
 import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavController
 import com.senaaksoy.moodify.R
 import com.senaaksoy.moodify.navigation.Screen
@@ -24,9 +30,24 @@ fun SplashScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    // İlk açılışta bildirim izni iste
     RequestNotificationPermission()
     val context = LocalContext.current
+
+
+    val view = LocalView.current
+
+    DisposableEffect(Unit) {
+        val window = (context as ComponentActivity).window
+        val windowInsetsController = WindowCompat.getInsetsController(window, view)
+
+        windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
+        windowInsetsController.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
+        onDispose {
+            windowInsetsController.show(WindowInsetsCompat.Type.statusBars())
+        }
+    }
 
     LaunchedEffect(key1 = true) {
         // Eğer uygulama bir deep link ile açıldıysa, intent.data üzerinden oku
@@ -35,17 +56,12 @@ fun SplashScreen(
         val oobCode = data?.getQueryParameter("oobCode")
 
         if (host == "resetPassword" && !oobCode.isNullOrEmpty()) {
-            // Reset password ekranına git
-            /*navController.navigate("ResetPasswordScreen?oobCode=$oobCode") {
-                popUpTo(Screen.SplashScreen.route) { inclusive = true }
-            }*/
+
             navController.navigateSingleTopClear(route = "ResetPasswordScreen?oobCode=$oobCode")
         } else {
-            // Normal 3 saniye bekleyip SignInScreen'e git
+
             delay(3000)
-           /* navController.navigate(Screen.SignInScreen.route) {
-                popUpTo(Screen.SplashScreen.route) { inclusive = true }
-            }*/
+
             navController.navigateSingleTopClear(route = Screen.SignInScreen.route)
         }
     }

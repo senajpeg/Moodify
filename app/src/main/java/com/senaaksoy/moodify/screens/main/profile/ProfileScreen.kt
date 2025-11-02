@@ -1,4 +1,5 @@
-package com.senaaksoy.moodify.screens
+package com.senaaksoy.moodify.screens.main.profile
+
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -16,9 +17,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -42,6 +47,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.senaaksoy.moodify.R
+import com.senaaksoy.moodify.navigation.Screen
+import com.senaaksoy.moodify.navigation.navigateSingleTopClear
 import com.senaaksoy.moodify.utils.RequestNotificationPermission
 import com.senaaksoy.moodify.viewmodel.AuthViewModel
 import com.senaaksoy.moodify.viewmodel.NotificationViewModel
@@ -82,7 +89,6 @@ fun ProfileScreen(
     ) {
         Spacer(modifier = Modifier.height(40.dp))
 
-        // Profile Image
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -125,7 +131,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // User Info
         ProfileInfoRow(
             label = stringResource(R.string.username_),
             value = currentUser?.displayName ?: stringResource(R.string.n_a)
@@ -146,11 +151,42 @@ fun ProfileScreen(
             modifier = Modifier.padding(vertical = 16.dp)
         )
 
-        // Notification Settings
+
         NotificationSettingsRow(
             enabled = notificationsEnabled,
             onToggle = { notificationViewModel.toggleNotifications(it) }
         )
+        Spacer(modifier = Modifier.height(40.dp))
+        Button(
+            onClick = {
+                authViewModel.logOut()
+                navController.navigateSingleTopClear(Screen.SignInScreen.route)
+            },
+            modifier = Modifier
+                .widthIn(max = 350.dp)
+                .fillMaxWidth(0.6f)
+                .clip(shape = RoundedCornerShape(12.dp))
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFA065E3),
+                            Color(0xFF5E8BCB)
+                        )
+                    )
+                ),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent
+            )
+        ) {
+            Text(
+                text = stringResource(R.string.log_out),
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+
     }
 }
 

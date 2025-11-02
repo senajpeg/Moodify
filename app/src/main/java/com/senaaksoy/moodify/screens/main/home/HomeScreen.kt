@@ -1,4 +1,5 @@
-package com.senaaksoy.moodify.screens
+package com.senaaksoy.moodify.screens.main.home
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

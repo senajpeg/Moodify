@@ -4,7 +4,9 @@ data class FavoriteTrack(
     val trackId: Long = 0L,
     val title: String = "",
     val artistName: String = "",
+    val artistId: Long = 0L,
     val albumTitle: String = "",
+    val albumId: Long = 0L,
     val albumCover: String? = null,
     val duration: Int = 0,
     val preview: String? = null,
@@ -16,7 +18,9 @@ fun DeezerTrack.toFavoriteTrack(): FavoriteTrack {
         trackId = this.id,
         title = this.title,
         artistName = this.artist.name,
+        artistId = this.artist.id,
         albumTitle = this.album.title,
+        albumId = this.album.id,
         albumCover = this.album.coverMedium,
         duration = this.duration,
         preview = this.preview
@@ -30,12 +34,12 @@ fun FavoriteTrack.toDeezerTrack(): DeezerTrack {
         duration = this.duration,
         preview = this.preview,
         artist = DeezerArtist(
-            id = 0L,
+            id = this.artistId,
             name = this.artistName,
-            pictureMedium = null
+            pictureMedium = this.albumCover
         ),
         album = DeezerAlbum(
-            id = 0L,
+            id = this.albumId,
             title = this.albumTitle,
             coverMedium = this.albumCover
         )
